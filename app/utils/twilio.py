@@ -22,6 +22,6 @@ def enviar_codigo_verificacao(celular):
         .v2 \
         .services(service_sid) \
         .verifications \
-        .create(to=f'+{celular}', channel='whatsapp')  # Pode usar 'whatsapp' se preferir
+        .create(to=f'+{celular}', channel='sms')  # Pode usar 'whatsapp' se preferir
     
     return True  # Retorna sucesso
