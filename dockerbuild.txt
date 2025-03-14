@@ -1,0 +1,2 @@
+docker build -t your-image-name .
+docker run -p 5000:5000 --env-file .env your-image-name

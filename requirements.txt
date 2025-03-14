@@ -1,0 +1,7 @@
+Flask==3.1.0
+Flask-JWT-Extended==4.7.1
+Flask-SQLAlchemy==3.1.1
+Twilio==9.5.0
+requests==2.32.3
+python-dotenv==1.0.1
+flask_migrate==4.1.0
