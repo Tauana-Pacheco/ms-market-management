@@ -9,7 +9,6 @@ class Seller(db.Model):
     celular = db.Column(db.String(15), nullable=False)
     senha = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(10), default="inativo")
-    codigo_verificação = db.Column(db.String(4), nullable=True)
 
     def __init__(self, nome, cnpj, email, celular, senha):
         self.nome = nome

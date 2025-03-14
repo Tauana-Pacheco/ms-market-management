@@ -14,15 +14,15 @@ def register_seller():
     celular = data['celular']
     senha = data['senha']
 
-
+    # Criar e salvar o seller no banco
     seller = Seller(nome=nome, cnpj=cnpj, email=email, celular=celular, senha=senha)
     db.session.add(seller)
     db.session.commit()
 
-    codigo = enviar_codigo_verificacao(celular)
+    # Enviar código de verificação via Twilio
+    sucesso = enviar_codigo_verificacao(celular)
 
-    seller.codigo_verificação = codigo
+    if not sucesso:
+        return jsonify({"error": "Falha ao enviar código de verificação"}), 500
 
-    db.session.commit()
-
-    return jsonify({"message": "cadastro realizado com sucesso, código de verificação enviado."}), 201
+    return jsonify({"message": "Cadastro realizado com sucesso. Código de verificação enviado!"}), 201
