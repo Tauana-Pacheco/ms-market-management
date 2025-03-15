@@ -8,13 +8,13 @@ from app.controllers.auth_controller import auth_bp
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Inicializar o banco de dados
+# inicializar o banco de dados
 db.init_app(app)
 
-# Configurar Flask-Migrate
+# configurar Flask-Migrate
 migrate = Migrate(app, db)
 
-# Registrar os Blueprints
+# registrar os Blueprints
 app.register_blueprint(seller_bp, url_prefix='/seller')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 

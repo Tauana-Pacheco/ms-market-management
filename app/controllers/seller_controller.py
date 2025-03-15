@@ -15,12 +15,12 @@ def register_seller():
     celular = data['celular']
     senha = generate_password_hash(data['senha'])
 
-    # Criar e salvar o seller no banco
+    # criar e salvar o seller no banco
     seller = Seller(nome=nome, cnpj=cnpj, email=email, celular=celular, senha=senha)
     db.session.add(seller)
     db.session.commit()
 
-    # Enviar código de verificação via Twilio
+    # enviar código de verificação via Twilio
     sucesso = enviar_codigo_verificacao(celular)
 
     if not sucesso:
