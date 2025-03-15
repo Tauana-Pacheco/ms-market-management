@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.core.domain.seller import Seller, db
 from app.utils.twilio import enviar_codigo_verificacao
+from werkzeug.security import generate_password_hash
 
 seller_bp = Blueprint('seller', __name__)
 
@@ -12,7 +13,7 @@ def register_seller():
     cnpj = data['cnpj']
     email = data['email']
     celular = data['celular']
-    senha = data['senha']
+    senha = generate_password_hash(data['senha'])
 
     # Criar e salvar o seller no banco
     seller = Seller(nome=nome, cnpj=cnpj, email=email, celular=celular, senha=senha)
