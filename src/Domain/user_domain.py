@@ -1,18 +1,26 @@
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+# user_domain.py
+from werkzeug.security import generate_password_hash, check_password_hash
+import random
 
-class Seller(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(255), nullable=False)
-    cnpj = db.Column(db.String(14), unique=True, nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    celular = db.Column(db.String(15), nullable=False)
-    senha = db.Column(db.String(255), nullable=False)
-    status = db.Column(db.String(10), default="inativo")
-
-    def __init__(self, nome, cnpj, email, celular, senha):
+class UserDomain:
+    def __init__(self, nome, cnpj, email, celular, senha, status="Inativo"):
         self.nome = nome
         self.cnpj = cnpj
         self.email = email
         self.celular = celular
-        self.senha = senha
+        self.senha = generate_password_hash(senha) 
+        self.status = status
+        self.activation_code = None
+
+    def verificar_senha(self, senha):
+        return check_password_hash(self.senha, senha)
+
+    def ativar_conta(self):
+        self.status = "Ativo"
+
+    def gerar_codigo_ativacao(self):
+        self.activation_code = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+        return self.activation_code
+
+    def verificar_codigo_ativacao(self, codigo):
+        return self.activation_code == codigo
