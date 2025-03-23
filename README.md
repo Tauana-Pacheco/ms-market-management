@@ -146,3 +146,23 @@ Um seller autenticado pode:
 
 ## 📌 Considerações Finais
 Este projeto fornece um sistema completo para mini mercados gerenciarem seus estoques e vendas com segurança e eficiência. 🚀
+
+## Estrutura do Projeto
+
+```bash
+  src/                  
+  ├── Aplication/       
+  │   │    ├── Controler/
+  │   │    │   user_controller.py
+  │   │    ├── Service/   
+  │   │    │   user_service.py 
+  ├── Domain/               
+  │   │  user_domain.py   
+  ├── Infrastructure/       
+  │   ├── Http/      
+  │   │   whatsapp.py      
+  │   ├── Models/      
+  │   │   user_model.py  
+  ├── config.py
+  ├── routes
+```
