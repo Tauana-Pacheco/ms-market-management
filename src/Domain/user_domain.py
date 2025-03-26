@@ -22,4 +22,4 @@ class UserDomain:
         return self.activation_code
 
     def verificar_codigo_ativacao(self, codigo):
-        return self.activation_code == codigo
+        return self.activation_code == str(codigo)
