@@ -1,0 +1,1 @@
+Pasta para armazenamento das fotos dos produtos

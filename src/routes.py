@@ -1,7 +1,6 @@
 from flask import Flask
 from Application.Controller.user_controller import UserController
 from config import Config, db
-from Infrastructure.Models.products_model import Products
 from Application.Controller.product_controller import ProductController
 from flask_cors import CORS
 

@@ -1,71 +1,50 @@
 from Infrastructure.Models.user_model import User
-from Infrastructure.Http.whatsapp import WhatsAppService, send_whatsapp_message
 from Domain.user_domain import UserDomain
-
-
-class UserService: 
-  def __init__(self):
+from Infrastructure.Http.whatsapp import WhatsAppService
+from Infrastructure.Helpers.jwt_helper import gerar_token
+class UserService:
+    def __init__(self):
         self.whatsapp_service = WhatsAppService()
 
-  # user_domainlorem = UserDomain("Mini Mercado Exemplo", "12345678000199", "exemplo@mercadinho.com", "5511985327304", "senha123")
+    @staticmethod
+    def register_user(data):
+        if not all(key in data for key in ['nome', 'cnpj', 'email', 'celular', 'senha']):
+            return {'error': 'Dados incompletos, verifique!'}
+
+        # Cria a instância do UserDomain
+        user_domain = UserDomain(
+            nome=data['nome'],
+            cnpj=data['cnpj'],
+            email=data['email'],
+            celular=data['celular'],
+            senha=data['senha'],
+            status='Inativo'
+        )
+
+        # Aqui é onde o código de ativação é gerado
+        activation_code = user_domain.gerar_codigo_ativacao()
+
+        # Cria o usuário no banco de dados
+        user = User(
+            nome=user_domain.nome,
+            cnpj=user_domain.cnpj,
+            email=user_domain.email,
+            celular=user_domain.celular,
+            senha=user_domain.senha,
+            status=user_domain.status,
+            activation_code=activation_code  # Define o código gerado
+        )
+        user.save()
+
+        # Envia a mensagem de ativação via WhatsApp
+        message = f'Seu código de ativação é: {activation_code}'
+        UserService().whatsapp_service.send_message(user.celular, message)
+
+        return {'message': 'Usuário registrado com sucesso! Aguarde a ativação.'}
     
-
-  @staticmethod
-  def register_user(data):
-      if not all(key in data for key in ['nome', 'cnpj', 'email', 'celular', 'senha']):
-        return {'error': 'Dados incompletos, verique!'}
-
-      user = User(
-              nome=data['nome'],
-              cnpj=data['cnpj'],
-              email=data['email'],
-              celular=data['celular'],
-              senha=data['senha'],
-              status='Inativo'
-          )
-      
-      lorem = UserDomain(
-        nome="Mercado XPTO",
-        cnpj="12.345.678/0001-99",
-        email="mercado@email.com",
-        celular="11999999999",
-        senha="senha123"
-     )
-
-
-      activation_code = lorem.gerar_codigo_ativacao()
-      user.save()
-
-      message = f'Seu código de ativação é: {activation_code}'
-      send_whatsapp_message(user.celular, message)
-
-      return {'message': 'Usuário registrado com sucesso! Aguarde a ativação.'}
-
- 
-  @staticmethod
-  def activate_user(data):  
-      user = User.find_by_email(data['email'])
-      if user:
-          user_domain = UserDomain(
-              nome=user.nome,
-              cnpj=user.cnpj,
-              email=user.email,
-              celular=user.celular,
-              senha=user.senha,
-              status=user.status
-          )
-          user_domain.activation_code = user.activation_code
-
-          if user_domain.verificar_codigo_ativacao(data['code']):
-              user_domain.ativar_conta()
-              user.status = user_domain.status
-              user.activation_code = None  # Remove o código após a ativação
-              user.save()
-              return {'message': 'Conta ativada com sucesso.'}
-      return {'error': 'Código de ativação inválido.'}
-  
-  @staticmethod
-  def login_user(data):
+    
+    @staticmethod
+    def activate_user(data):  
         user = User.find_by_email(data['email'])
         if user:
             user_domain = UserDomain(
@@ -76,8 +55,31 @@ class UserService:
                 senha=user.senha,
                 status=user.status
             )
-        if user_domain.verificar_senha(data['senha']):
+            user_domain.activation_code = user.activation_code
+
+            if user_domain.verificar_codigo_ativacao(data['code']):
+                user_domain.ativar_conta()
+                user.status = user_domain.status
+                user.activation_code = None  # Remove o código após a ativação
+                user.save()
+                return {'message': 'Conta ativada com sucesso.'}
+        return {'error': 'Código de ativação inválido.'}
+  
+    @staticmethod
+    def login_user(data):
+            user = User.find_by_email(data['email'])
+            if user:
+             user_domain = UserDomain(
+                    nome=user.nome,
+                    cnpj=user.cnpj,
+                    email=user.email,
+                    celular=user.celular,
+                    senha_hash=user.senha,
+                    status=user.status
+             )
+            if user_domain.verificar_senha(data['senha']):
                 if user.status == 'Ativo':
-                    return {'message': 'Login bem-sucedido.'}
+                    token = gerar_token(user.email)
+                    return {'message': 'Login bem-sucedido.', 'token': token}
                 return {'error': 'Conta inativa. Por favor, ative sua conta.'}
-        return {'error': 'Credenciais inválidas.'}
+            return {'error': 'Credenciais inválidas.'}

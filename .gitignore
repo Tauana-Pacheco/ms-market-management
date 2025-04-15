@@ -1,1 +1,9 @@
 .env
+src/Application/Service/__pycache__/*
+src/Application/Controller/__pycache__/*
+src/Domain/__pycache__/*
+src/Infrastructure/Helpers/__pycache__/*
+src/Infrastructure/Http/__pycache__/*
+src/Infrastructure/Models/__pycache__/*
+__pycache__/
+*.pyc
