@@ -1,15 +1,17 @@
 from Infrastructure.Models.user_model import User
 from Domain.user_domain import UserDomain
-from Infrastructure.Http.whatsapp import WhatsAppService
+from Application.Interefaces.message_service_interface import IMessageService
 from Infrastructure.Helpers.jwt_helper import gerar_token
-class UserService:
-    def __init__(self):
-        self.whatsapp_service = WhatsAppService()
+from Application.Validators.user_validator import validar_dados_usuario
 
-    @staticmethod
-    def register_user(data):
-        if not all(key in data for key in ['nome', 'cnpj', 'email', 'celular', 'senha']):
-            return {'error': 'Dados incompletos, verifique!'}
+class UserService:
+    def __init__(self, message_service: IMessageService):
+        self.message_service = message_service
+
+    def register_user(self, data):
+        erro = validar_dados_usuario(data)
+        if erro:
+            return{'error': erro}
 
         # Cria a instância do UserDomain
         user_domain = UserDomain(
@@ -38,13 +40,12 @@ class UserService:
 
         # Envia a mensagem de ativação via WhatsApp
         message = f'Seu código de ativação é: {activation_code}'
-        UserService().whatsapp_service.send_message(user.celular, message)
+        self.message_service.send_message(user.celular, message)
 
         return {'message': 'Usuário registrado com sucesso! Aguarde a ativação.'}
     
     
-    @staticmethod
-    def activate_user(data):  
+    def activate_user(self, data):
         user = User.find_by_email(data['email'])
         if user:
             user_domain = UserDomain(
@@ -60,13 +61,13 @@ class UserService:
             if user_domain.verificar_codigo_ativacao(data['code']):
                 user_domain.ativar_conta()
                 user.status = user_domain.status
-                user.activation_code = None  # Remove o código após a ativação
+                user.activation_code = None
                 user.save()
                 return {'message': 'Conta ativada com sucesso.'}
+
         return {'error': 'Código de ativação inválido.'}
-  
-    @staticmethod
-    def login_user(data):
+    
+    def login_user(self, data):
             user = User.find_by_email(data['email'])
             if user:
              user_domain = UserDomain(
