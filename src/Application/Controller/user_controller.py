@@ -2,23 +2,23 @@ from flask import request, jsonify
 from Application.Service.user_service import UserService
 
 class UserController: 
-  def __init__(self):
-      self.user_service = UserService()
+  def __init__(self, user_service):
+      self.user_service = user_service
       
-  @staticmethod
-  def register():
+
+  def register(self):
     data = request.get_json()
-    result = UserService.register_user(data) 
+    result = self.user_service.register_user(data) 
     return jsonify(result), 201
 
-  @staticmethod
-  def activate():
+  
+  def activate(self):
     data = request.get_json()
-    result = UserService.activate_user(data)
+    result = self.user_service.activate_user(data)
     return jsonify(result), 201
 
-  @staticmethod
-  def login():
+ 
+  def login(self):
     data = request.get_json()
-    result = UserService.login_user(data)
+    result = self.user_service.login_user(data)
     return jsonify(result), 201

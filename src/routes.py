@@ -1,7 +1,9 @@
 from flask import Flask
 from Application.Controller.user_controller import UserController
+from Application.Service.user_service import UserService
 from config import Config, db
 from Application.Controller.product_controller import ProductController
+from Infrastructure.Http.whatsapp import WhatsAppService
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -15,9 +17,12 @@ with app.app_context():
 
 SQLALCHEMY_ECHO = True
 
-app.route('/register', methods=['POST'])(UserController.register)
-app.route('/activate', methods=['POST'])(UserController.activate)
-app.route('/login', methods=['POST'])(UserController.login)
+user_service = UserService(WhatsAppService())
+user_controller = UserController(user_service)
+
+app.route('/register', methods=['POST'])(user_controller.register)
+app.route('/activate', methods=['POST'])(user_controller.activate)
+app.route('/login', methods=['POST'])(user_controller.login)
 app.route('/register_produto', methods=['POST'])(ProductController.register_product)
 app.route('/produtos', methods=['GET'])(ProductController.listar_produtos)
 app.route('/assets/<path:filename>', methods=['GET'])(ProductController.serve_assets)
