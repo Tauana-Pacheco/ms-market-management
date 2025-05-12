@@ -3,7 +3,7 @@ import datetime
 from flask import request, jsonify
 from functools import wraps
 
-SECRET_KEY = 'sua_chave_secreta_super_segura'
+SECRET_KEY = 'msmarket'
 
 def gerar_token(email):
     payload = {
