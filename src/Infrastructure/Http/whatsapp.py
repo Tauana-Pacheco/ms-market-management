@@ -5,7 +5,7 @@ from Application.Interefaces.message_service_interface import IMessageService
 
 load_dotenv()
 
-#recebe Interface ImessageService para o preenchimento dos argumentos e envio das mensagens
+
 class WhatsAppService(IMessageService):
     def __init__(self):
         account_sid = os.getenv('TWILIO_ACCOUNT_SID')

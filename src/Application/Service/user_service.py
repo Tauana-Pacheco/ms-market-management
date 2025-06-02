@@ -13,7 +13,7 @@ class UserService:
         if erro:
             return{'error': erro}
 
-        # Cria a instância do UserDomain
+       
         user_domain = UserDomain(
             nome=data['nome'],
             cnpj=data['cnpj'],
@@ -23,10 +23,9 @@ class UserService:
             status='Inativo'
         )
 
-        # Aqui é onde o código de ativação é gerado
+       
         activation_code = user_domain.gerar_codigo_ativacao()
 
-        # Cria o usuário no banco de dados
         user = User(
             nome=user_domain.nome,
             cnpj=user_domain.cnpj,
@@ -34,11 +33,10 @@ class UserService:
             celular=user_domain.celular,
             senha=user_domain.senha,
             status=user_domain.status,
-            activation_code=activation_code  # Define o código gerado
+            activation_code=activation_code  
         )
         user.save()
 
-        # Envia a mensagem de ativação via WhatsApp
         message = f'Seu código de ativação é: {activation_code}'
         self.message_service.send_message(user.celular, message)
 
