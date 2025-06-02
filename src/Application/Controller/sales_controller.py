@@ -4,14 +4,14 @@ from flask import request, jsonify
 from datetime import datetime
 from Infrastructure.Models.products_model import Products
 from Domain.sales_domain import SalesDomain
-
+from Infrastructure.Models.user_model import User
 class SalesController:
     
     @staticmethod
     @token_obrigatorio
     def registrar_venda(user_email):
         data = request.get_json()
-
+        user = User.find_by_email(user_email)
         try:
             sales_domain = SalesDomain(
                 produto_id=data['produto_id'],
@@ -25,10 +25,12 @@ class SalesController:
         produto = Products.query.get(sales_domain.produto_id)
         if not produto:
             return jsonify({"error": "Produto não encontrado"}), 404
-        
+        if user.status != "Ativo":
+            return jsonify({"error": "Usuários inativados não podem realizar vendas"}), 403
+        if produto.status != "Ativo":
+            return jsonify({"error": "Produtos inativados não podem ser vendidos"}), 403
         if produto.user_email != user_email:
             return jsonify({"error": "Você não tem permissão para vender este produto"}), 403
-        
         if produto.quantidade < sales_domain.quantidade_vendida:
             return jsonify({"error": "Estoque insuficiente"}), 400
         

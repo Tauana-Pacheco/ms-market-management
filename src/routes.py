@@ -6,7 +6,7 @@ from Application.Controller.product_controller import ProductController
 from Infrastructure.Http.whatsapp import WhatsAppService
 from flask_cors import CORS
 
-from src.Application.Controller.sales_controller import SalesController
+from Application.Controller.sales_controller import SalesController
 
 app = Flask(__name__)
 app.config.from_object(Config)
