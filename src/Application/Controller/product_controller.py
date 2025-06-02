@@ -33,7 +33,7 @@ class ProductController:
             quantidade=quantidade,
             status=status,
             imagem=imagem_path,
-            user_email=user_email  # ← associar o dono
+            user_email=user_email
         )
 
         novo_produto.save()
