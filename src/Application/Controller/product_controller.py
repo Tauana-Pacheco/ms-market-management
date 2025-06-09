@@ -112,3 +112,32 @@ class ProductController:
 
         produto.save()
         return jsonify({'message': 'Produto atualizado com sucesso'}), 200
+    
+    
+    @staticmethod
+    @token_obrigatorio
+    def copiar_produto(user_email, id):
+        produto = Products.query.get(id)
+        if not produto:
+            return jsonify({'error': 'Produto não encontrado'}), 404
+
+        novo_produto = Products(
+            nome=produto.nome,
+            preco=produto.preco,
+            quantidade=produto.quantidade,
+            status=produto.status,
+            imagem=produto.imagem,
+            user_email=user_email
+        )
+
+        novo_produto.save()
+
+        return jsonify({
+            "id": novo_produto.id,
+            "nome": novo_produto.nome,
+            "preco": float(novo_produto.preco),
+            "quantidade": novo_produto.quantidade,
+            "status": novo_produto.status,
+            "imagem": novo_produto.imagem
+        }), 201
+

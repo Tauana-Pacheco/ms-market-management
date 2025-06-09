@@ -33,6 +33,7 @@ app.route('/produtos/<int:id>', methods=['GET'])(ProductController.get_produto)
 app.route('/produtos/<int:id>', methods=['PUT'])(ProductController.atualizar_produto)
 app.route('/vendas', methods=['POST'])(SalesController.registrar_venda)
 app.route('/vendas', methods=['GET'])(SalesController.historico_vendas)
+app.route('/produtos/copiar/<int:id>', methods=['POST'])(ProductController.copiar_produto)
 
 if __name__ == "__main__":
     app.run(debug=True)
