@@ -45,12 +45,12 @@ class SalesController:
     @staticmethod
     @token_obrigatorio
     def historico_vendas(user_email):
-        vendas = Sales.query.filter(user_email==user_email).all()
+        vendas = Sales.query.filter_by(user_email=user_email).all()
 
         return jsonify(
                         [
                         {"id": venda.id,
-                        "produto_id": venda.produto_id,
+                        "produto": {"nome": venda.produto.nome},
                         "quantidade_vendida": venda.quantidade_vendida,
                         "data_venda": venda.data_venda.strftime('%Y-%m-%d %H:%M:%S'),
                         "valor_total": float(venda.valor_total)
